@@ -15,5 +15,36 @@ namespace BackEnd.Data.Services
         {
             _contexto = contexto;
         }
+
+        public async Task<IEnumerable<Disciplina>> ObterTodos(bool incluirProfessor)
+        {
+            IQueryable<Disciplina> consulta = _contexto.Disciplina;
+
+            if (incluirProfessor) 
+            {
+                consulta = consulta.Include(d => d.Professor);
+            }
+
+            consulta = consulta.AsNoTracking().OrderBy(a => a.id);
+
+            return await consulta.ToArrayAsync();
+        }
+
+        public async Task<Disciplina> ObterPeloId(int disciplinaId, bool incluirProfessor)
+        {
+            IQueryable<Disciplina> consulta = _contexto.Disciplina;
+
+            if (incluirProfessor) 
+            {
+                consulta = consulta..Include(d => d.Professor);
+            }
+
+            consulta = consulta.AsNoTracking()
+                               .OrderBy(a => a.id)
+                               .Where(d => d.id == disciplinaId);
+
+            return await consulta.FirstOrDefaultAsync();
+        }
+
     }
 }
